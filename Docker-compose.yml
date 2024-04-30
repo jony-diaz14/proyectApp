@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+    mariadb:
+        image: bitnami/mariadb:latest
+        ports:
+            - "3306:3306"
+        environment:
+            - ALLOW_EMPTY_PASSWORD=yes
+            - MARIADB_USER=admin
+            - MARIADB_DATABASE=database_practicas
+        volumes:
+            - mariadb_data:/bitnami/mariadb
+        networks:
+            - proyectApp
+
+    laravel:
+        build: .
+        ports:
+            - "8000:8000"
+        environment:
+            - DB_HOST=mariadb
+            - DB_PORT=3306
+            - DB_USERNAME=admin
+            - DB_DATABASE=database_practicas
+        volumes:
+            - .:/app
+        networks:
+            - proyectApp
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        ports:
+            - "8080:80"
+        environment:
+            - PMA_ARBITRARY=1
+        networks:
+            - proyectApp
+
+networks:
+    proyectApp:
+
+volumes:
+    mariadb_data:
